@@ -667,6 +667,8 @@ function leerForm() {
   return r;
 }
 
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwTP9PT5JbB6_2erQVWzD65mzQyDcimm8xsZn5n7rX8DVoezVY38uA4AqtuERTBNeU7/exec';
+
 function agregar() {
   const r = leerForm();
   if (!r['IdPoliza'] && !r['Nombre']) {
@@ -674,7 +676,11 @@ function agregar() {
   }
   registros.push(r);
   renderTabla();
-  toast('✓ Registro agregado.');
+  toast('⏳ Guardando en Sheets...');
+  const params = new URLSearchParams(r).toString();
+  fetch(SHEETS_URL + '?' + params, { mode: 'no-cors' })
+  .then(() => toast('✓ Registro guardado en Sheets.'))
+  .catch(() => toast('⚠ Error al guardar en Sheets. Descarga el Excel.', '#c0392b'));
 }
 
 function renderTabla() {
