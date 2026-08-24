@@ -15,21 +15,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gris-fondo); color: var(--gris-oscuro); min-height: 100vh; }
 
-  /* LOGIN */
-  #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(145deg, var(--verde) 0%, #0d3a18 100%); }
-  .login-card { background: var(--blanco); border-radius: 12px; padding: 2.5rem 2rem; width: 100%; max-width: 340px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-  .login-logo { text-align: center; margin-bottom: 1.8rem; }
-  .login-logo .marca { font-size: 1.6rem; font-weight: 800; color: var(--verde); letter-spacing: 2px; }
-  .login-logo .sub { font-size: 0.75rem; color: var(--gris); letter-spacing: 1px; margin-top: 2px; }
-  .login-card label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--gris); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .login-card input { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--gris-borde); border-radius: 6px; font-size: 0.95rem; margin-bottom: 1rem; outline: none; transition: border-color 0.2s; }
-  .login-card input:focus { border-color: var(--verde); }
-  .btn-login { width: 100%; padding: 0.7rem; background: var(--verde); color: var(--blanco); border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
-  .btn-login:hover { background: var(--verde-medio); }
-  #login-error { color: var(--rojo); font-size: 0.85rem; text-align: center; margin-top: 0.75rem; display: none; }
-
   /* APP */
-  #app { display: none; }
   header { background: var(--verde); color: var(--blanco); padding: 0.7rem 1.2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--sombra); position: sticky; top: 0; z-index: 100; }
   .header-marca { font-size: 1.1rem; font-weight: 800; letter-spacing: 1.5px; }
   .header-sub { font-size: 0.7rem; opacity: 0.75; }
@@ -94,33 +80,14 @@
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="marca">MUTUAL</div>
-      <div class="sub">CAPTURA DE PÓLIZAS</div>
-    </div>
-    <label for="li-u">Usuario</label>
-    <input type="text" id="li-u" placeholder="usuario">
-    <label for="li-p">Contraseña</label>
-    <input type="password" id="li-p" placeholder="••••••">
-    <button class="btn-login" onclick="login()">Entrar</button>
-    <div id="login-error">Usuario o contraseña incorrectos.</div>
-  </div>
-</div>
-
 <!-- APP -->
-<div id="app">
+<div id="app" style="display:block">
   <header>
     <div>
       <div class="header-marca">MUTUAL</div>
       <div class="header-sub">CAPTURA DE PÓLIZAS</div>
     </div>
-    <div class="header-right">
-      <span class="badge-admin">ADMINISTRADOR</span>
-      <button class="btn-logout" onclick="logout()">Salir</button>
-    </div>
+    <div class="header-right"></div>
   </header>
 
   <div class="container">
@@ -337,35 +304,19 @@
 
 <script>
 // ── AUTH ──────────────────────────────────────────────
-const USUARIOS = { "admin": "mutual2026" };
-let sesion = false, registros = [];
+let sesion = true, registros = [];
 const EMPRESAS = { "1":"MUTUCLUB", "2":"MUTUALIDAD JUDA", "3":"ARCA" };
 
-function login() {
-  const u = document.getElementById('li-u').value.trim().toLowerCase();
-  const p = document.getElementById('li-p').value;
-  if (USUARIOS[u] === p) {
-    sesion = true;
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('f-FechaCaptura').value = new Date().toISOString().slice(0,10);
-    document.getElementById('login-error').style.display = 'none';
-    initCatalogos();
-  } else {
-    document.getElementById('login-error').style.display = 'block';
-  }
-}
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('li-p').addEventListener('keydown', e => { if (e.key==='Enter') login(); });
+  document.getElementById('f-FechaCaptura').value = new Date().toISOString().slice(0,10);
+  initCatalogos();
   renderTabla();
 });
+
 function logout() {
   if (registros.length > 0 && !confirm('¿Salir? Los registros no descargados se perderán.')) return;
-  sesion = false; registros = [];
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('li-u').value = '';
-  document.getElementById('li-p').value = '';
+  registros = [];
+  renderTabla();
 }
 
 // ── VIGENCIA AUTOMÁTICA ───────────────────────────────
